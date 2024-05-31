@@ -1,0 +1,3 @@
+packages:
+  - 'ember-classic-import-meta-glob'
+  - 'test-app'
