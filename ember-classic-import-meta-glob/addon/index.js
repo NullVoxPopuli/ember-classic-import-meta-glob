@@ -1,4 +1,6 @@
+/* globals requirejs */
 import { assert } from '@ember/debug';
+
 import pico from 'picomatch';
 
 /**
@@ -31,11 +33,11 @@ export function importMetaGlob(glob, options, modulePath) {
    * 4. chop off the directory from the results to match the same relativeness
    *
    */
-  let [_last, ...reversedParts] = modulePath.split('/').reverse();
+  let [, ...reversedParts] = modulePath.split('/').reverse();
   let currentDir = reversedParts.reverse().join('/');
 
   let fullGlobs = Array.isArray(glob)
-    ? glob.map((g) => `${modulePath}${g}`)
+    ? glob.map((g) => `${currentDir}${g}`)
     : [`${modulePath}${glob}`];
   let isMatch = pico(fullGlobs);
   let matches = allModules.filter(isMatch);

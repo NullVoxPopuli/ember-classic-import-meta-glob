@@ -1,10 +1,5 @@
 const { ImportUtil } = require('babel-import-util');
-const {
-  callExpression,
-  memberExpression,
-  identifier,
-  stringLiteral,
-} = require('@babel/types');
+const { callExpression, stringLiteral } = require('@babel/types');
 
 // DEBUG:
 // https://astexplorer.net/#/gist/a72d97261099f82aac7be47112f66158/7e984bd728c0a4e9af4911b065f776aa21d68a7d

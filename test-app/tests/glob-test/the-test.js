@@ -4,7 +4,7 @@ import { globs as appTreeGlob } from 'test-app/glob-imports';
 
 const testTreeGlob = import.meta.glob('./from-tests/**', { eager: true });
 
-module('Glob tests', function (hooks) {
+module('Glob tests', function () {
   test('works from app', function (assert) {
     assert.deepEqual(appTreeGlob, {});
   });
