@@ -3,7 +3,6 @@
 const path = require('path');
 const { hasPlugin, addPlugin } = require('ember-cli-babel-plugin-helpers');
 const pluginPath = path.join(__dirname, './babel-plugin.cjs');
-const Plugin = require.resolve(pluginPath);
 
 module.exports = {
   name: require('./package').name,

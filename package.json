@@ -1,23 +1,20 @@
 {
   "private": true,
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:NullVoxPopuli/ember-classic-import-meta-glob.git"
+  },
   "license": "MIT",
   "author": "",
   "scripts": {
-    "build": "pnpm --filter ember-classic-import-meta-glob build",
     "lint": "pnpm --filter '*' lint",
-    "lint:fix": "pnpm --filter '*' lint:fix",
-    "prepare": "pnpm build",
-    "start": "concurrently 'pnpm:start:*' --restart-after 5000 --prefix-colors cyan,white,yellow",
-    "start:addon": "pnpm --filter ember-classic-import-meta-glob start --no-watch.clearScreen",
-    "start:test-app": "pnpm --filter test-app start",
-    "test": "pnpm --filter '*' test",
-    "test:ember": "pnpm --filter '*' test:ember"
+    "lint:fix": "pnpm --filter '*' lint:fix"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
     "prettier": "^3.0.3",
-    "prettier-plugin-ember-template-tag": "^1.1.0"
+    "prettier-plugin-ember-template-tag": "^1.1.0",
+    "release-plan": "^0.9.0"
   },
   "pnpm": {
     "overrides": {
