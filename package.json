@@ -7,15 +7,8 @@
   "license": "MIT",
   "author": "",
   "scripts": {
-    "build": "pnpm --filter ember-classic-import-meta-glob build",
     "lint": "pnpm --filter '*' lint",
-    "lint:fix": "pnpm --filter '*' lint:fix",
-    "prepare": "pnpm build",
-    "start": "concurrently 'pnpm:start:*' --restart-after 5000 --prefix-colors cyan,white,yellow",
-    "start:addon": "pnpm --filter ember-classic-import-meta-glob start --no-watch.clearScreen",
-    "start:test-app": "pnpm --filter test-app start",
-    "test": "pnpm --filter '*' test",
-    "test:ember": "pnpm --filter '*' test:ember"
+    "lint:fix": "pnpm --filter '*' lint:fix"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
