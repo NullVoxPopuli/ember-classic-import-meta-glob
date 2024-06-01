@@ -67,5 +67,5 @@ jobs:
       - uses: actions/checkout@v4
       - uses: wyvox/action-setup-pnpm@v3
       - name: Run Tests
-        run: ./node_modules/.bin/ember try:one ${{ matrix.try-scenario }} --skip-cleanup --- pnpm test:ember
+        run: ./node_modules/.bin/ember try:one ${{ matrix.try-scenario }} --skip-cleanup --- pnpm run test:ember
         working-directory: test-app
