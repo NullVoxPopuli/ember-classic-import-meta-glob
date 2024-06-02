@@ -12,10 +12,33 @@ import pico from 'picomatch';
  * @param {string} modulePath file path prefixed with the module name, not CWD
  */
 export function importMetaGlob(glob, options, modulePath) {
+  let ARITY_3 = arguments.length === 3;
+
+  if (typeof options === 'string') {
+    modulePath = options;
+    options = null;
+  }
+
   assert(
-    `the second argument to import.meta.glob must be passed and set to { eager: true }`,
-    options && options.eager === true,
+    `The first argument to import.meta.glob must be a string`,
+    typeof glob === 'string',
   );
+  assert(
+    `The glob pattern must be a relative path starting with either ./ or ../. Received: ${glob}`,
+    glob.startsWith('./') || glob.startsWith('../'),
+  );
+
+  if (ARITY_3) {
+    assert(
+      `the second argument to import.meta.glob must be an object. Received: ${typeof options}`,
+      typeof options === 'object',
+    );
+    assert(
+      `the only supported option is 'eager'. Received: ${Object.keys(options)}`,
+      Object.keys(options).length === 1 && 'eager' in options,
+    );
+  }
+
   assert(
     `the third argument to import.meta.glob must be passed and be the module path. This is filled in automatically via the babel plugin. If you're seeing this something has gone wrong with installing the babel plugin`,
     modulePath,
@@ -36,17 +59,73 @@ export function importMetaGlob(glob, options, modulePath) {
   let [, ...reversedParts] = modulePath.split('/').reverse();
   let currentDir = reversedParts.reverse().join('/');
 
-  let fullGlobs = Array.isArray(glob)
-    ? glob.map((g) => `${currentDir}${g}`)
-    : [`${modulePath}${glob}`];
+  assert(
+    `not a valid path. Received: '${currentDir}' from '${modulePath}'`,
+    currentDir.length > 0,
+  );
+
+  // TODO: drop the extensions, since at runtime, we don't have them.
+  let globsArray = Array.isArray(glob) ? glob : [glob];
+
+  [...globsArray].forEach((g) => {
+    let extensionless = g.replace(/\.\w{2,3}$/, '');
+
+    globsArray.push(extensionless);
+  });
+
+  let fullGlobs = globsArray.map((g) => {
+    return `${currentDir}/${g.replace(/^.\//, '')}`;
+  });
   let isMatch = pico(fullGlobs);
   let matches = allModules.filter(isMatch);
+
+  let hasInvalid = fullGlobs.some(isEscapingApp);
+
+  assert(
+    `Cannot have a path that escapes the app. Received: ${glob}`,
+    !hasInvalid,
+  );
 
   let result = {};
 
   for (let match of matches) {
-    result[match] = requirejs(match);
+    let key = match.replace(`${currentDir}/`, './');
+
+    if (options?.eager) {
+      result[key] = requirejs(match);
+    } else {
+      // can we usue a real import if we use app-imports
+      // from ember-auto-import?
+      //
+      // *NO* because import can only take string or
+      //      template strings.
+      result[key] = () => Promise.resolve(requirejs(match));
+    }
   }
 
   return result;
+}
+
+function isEscapingApp(path) {
+  let parts = path.split('/');
+
+  let preUpCount = 0;
+  let upCount = 0;
+
+  for (let part of parts) {
+    if (part === '..') {
+      upCount++;
+      continue;
+    }
+
+    if (upCount > 0) {
+      break;
+    }
+
+    if (part !== '..') {
+      preUpCount++;
+    }
+  }
+
+  return upCount >= preUpCount;
 }
