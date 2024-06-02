@@ -6,10 +6,22 @@ const testTreeGlob = import.meta.glob('./from-tests/**', { eager: true });
 
 module('Glob tests', function () {
   test('works from app', function (assert) {
-    assert.deepEqual(appTreeGlob, { _: 1 });
+    let keys = Object.keys(appTreeGlob);
+    assert.deepEqual(keys, ['./from-app/a', './from-app/b', './from-app/c']);
+    assert.strictEqual(appTreeGlob['./from-app/a'].a, 'a1');
+    assert.strictEqual(appTreeGlob['./from-app/b'].b, 'b1');
+    assert.strictEqual(appTreeGlob['./from-app/c'].c, 'c1');
   });
   test('works from tests', function (assert) {
-    assert.deepEqual(testTreeGlob, { _: 1 });
+    let keys = Object.keys(testTreeGlob);
+    assert.deepEqual(keys, [
+      './from-tests/a',
+      './from-tests/b',
+      './from-tests/c',
+    ]);
+    assert.strictEqual(appTreeGlob['./from-app/a'].a, 'a1');
+    assert.strictEqual(appTreeGlob['./from-app/b'].b, 'b1');
+    assert.strictEqual(appTreeGlob['./from-app/c'].c, 'c1');
   });
 
   test('with no matches', function (assert) {
