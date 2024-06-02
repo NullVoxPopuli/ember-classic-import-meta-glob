@@ -6,6 +6,7 @@ Implements [RFC#939: import.meta.glob](https://github.com/emberjs/rfcs/pull/939)
 
 - Apps using ember-source v3.28
 - ember-auto-import v2
+  - unless the paths being imported are under the [`allowAppImports` config](https://github.com/embroider-build/ember-auto-import?tab=readme-ov-file#app-imports)
 - _not_ embroider. For embroider, use [`babel-plugin-transform-vite-meta-glob`](https://www.npmjs.com/package/babel-plugin-transform-vite-meta-glob)
 
 ## Installation

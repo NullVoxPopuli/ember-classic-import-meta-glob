@@ -94,8 +94,11 @@ export function importMetaGlob(glob, options, modulePath) {
     if (options?.eager) {
       result[key] = requirejs(match);
     } else {
-      // TODO: can we usue a real import if we use app-imports
-      //       from ember-auto-import?
+      // can we usue a real import if we use app-imports
+      // from ember-auto-import?
+      //
+      // *NO* because import can only take string or
+      //      template strings.
       result[key] = () => Promise.resolve(requirejs(match));
     }
   }
