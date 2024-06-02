@@ -2,7 +2,22 @@
 
 Implements [RFC#939: import.meta.glob](https://github.com/emberjs/rfcs/pull/939) for ember-classic (pre-embroider).
 
-Example:
+## Compatibility
+
+- Apps using ember-source v3.28
+- ember-auto-import v2
+- _not_ embroider. For embroider, use [`babel-plugin-transform-vite-meta-glob`](https://www.npmjs.com/package/babel-plugin-transform-vite-meta-glob)
+
+## Installation
+
+```
+pnpm add ember-classic-import-meta-glob
+```
+
+## Usage
+
+
+Default usage:
 ```js
 // If you type this in your app:
 const widgets = import.meta.glob('./widgets/*.js')
@@ -28,23 +43,12 @@ const widgets = {
 }
 ```
 
-## Compatibility
+## Differences from RFC#939
 
-- Apps using ember-source v3.28
-- ember-auto-import v2
-- _not_ embroider. For embroider, use [`babel-plugin-transform-vite-meta-glob`](https://www.npmjs.com/package/babel-plugin-transform-vite-meta-glob)
+- Extensions in the import paths are optional -- this because they do not exist at runtime, and the implementation for this version of import.meta.glob cannot determine what the original file names were.
+- the keys in the return object from `glob` will not contain file name extensions, because they do not exist at runtime.
 
-## Installation
-
-```
-pnpm add ember-classic-import-meta-glob
-```
-
-## Usage
-
-In your JS files:
-
-
+For ember-classic, this is meant to _ease_ migration to the new, modern features, reducing the overall diff you'd need if you didn't have entire feature sets that are available to embroider.  
 
 ## Contributing
 

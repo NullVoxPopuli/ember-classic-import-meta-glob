@@ -21,8 +21,12 @@ export function importMetaGlob(glob, options, modulePath) {
     glob.startsWith('./') || glob.startsWith('../'),
   );
   assert(
-    `the second argument to import.meta.glob must be passed and set to { eager: true }`,
-    options && options.eager === true,
+    `the second argument to import.meta.glob must be an object`,
+    typeof options === 'object',
+  );
+  assert(
+    `the only supported option is 'eager'. Received: ${Object.keys(options)}`,
+    Object.keys(options).length === 1 && 'eager' in options,
   );
   assert(
     `the third argument to import.meta.glob must be passed and be the module path. This is filled in automatically via the babel plugin. If you're seeing this something has gone wrong with installing the babel plugin`,
@@ -45,11 +49,14 @@ export function importMetaGlob(glob, options, modulePath) {
   let currentDir = reversedParts.reverse().join('/');
 
   // TODO: drop the extensions, since at runtime, we don't have them.
-  let fullGlobs = Array.isArray(glob)
-    ? glob.map((g) => `${currentDir}${g}`)
-    : [`${modulePath}${glob}`];
+  let globsArray = Array.isArray(glob) ? glob : [glob];
+  let fullGlobs = globsArray.map((g) => {
+    return `${currentDir}/${g.replace(/^.\//, '')}`;
+  });
   let isMatch = pico(fullGlobs);
   let matches = allModules.filter(isMatch);
+
+  console.log({ fullGlobs, matches, currentDir });
 
   // TODO: assert: cannot escape the app.
   //       (too many ../../../../)
@@ -57,7 +64,9 @@ export function importMetaGlob(glob, options, modulePath) {
   let result = {};
 
   for (let match of matches) {
-    result[match] = requirejs(match);
+    let key = match.replace(`${currentDir}/`, './');
+
+    result[key] = requirejs(match);
   }
 
   return result;

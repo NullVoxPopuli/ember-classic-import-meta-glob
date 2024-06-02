@@ -21,7 +21,7 @@ module('Glob tests', function () {
   test('default (async)', async (assert) => {
     let result = import.meta.glob('./from-tests/*');
 
-    assert.deepEqual(result, { _: 1 });
+    assert.deepEqual(result, { './from-tests/a': './' });
   });
 
   module('underlying runtime', function () {
@@ -31,20 +31,49 @@ module('Glob tests', function () {
 
       assert.deepEqual(a, b);
     });
-    test('errors when trying to escape the app', function (assert) {
-      assert.throws(() => {
-        importMetaGlob('../../../something', { eager: true }, 'test-app');
-      }, /123 boop/);
-    });
-    test('errors with no options', function (assert) {
-      assert.throws(() => {
-        importMetaGlob('**/*');
-      }, /123 boop/);
-    });
-    test('errors with no sourcePath', function (assert) {
-      assert.throws(() => {
-        importMetaGlob('**/*', { eager: true });
-      }, /123 boop/);
+
+    module('errors', function () {
+      module('glob', function () {
+        test('errors when trying to escape the app', function (assert) {
+          assert.throws(() => {
+            importMetaGlob('../../../something', { eager: true }, 'test-app');
+          }, /123 boop/);
+        });
+
+        test('invalid glob', function (assert) {
+          assert.throws(() => {
+            importMetaGlob('**/*');
+          }, /The glob pattern must be a relative path starting with either/);
+        });
+      });
+
+      module('options', function () {
+        test('errors with incorrect options', function (assert) {
+          assert.throws(() => {
+            importMetaGlob('./**/*', true);
+          }, /the second argument to import.meta.glob must be an object/);
+        });
+
+        test('when passing options, cannot be empty', function (assert) {
+          assert.throws(() => {
+            importMetaGlob('./**/*', {});
+          }, /the only supported option is 'eager'/);
+        });
+
+        test('when passing options, only eager is allowed', function (assert) {
+          assert.throws(() => {
+            importMetaGlob('./**/*', { boop: 1 });
+          }, /the only supported option is 'eager'/);
+        });
+      });
+
+      module('modulePath', function () {
+        test('errors with no modulePath', function (assert) {
+          assert.throws(() => {
+            importMetaGlob('./**/*', { eager: true });
+          }, /the third argument to import.meta.glob must be passed and be the module path/);
+        });
+      });
     });
   });
 });
