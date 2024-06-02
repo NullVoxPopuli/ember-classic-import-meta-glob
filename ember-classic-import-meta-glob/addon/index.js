@@ -59,7 +59,6 @@ export function importMetaGlob(glob, options, modulePath) {
   let [, ...reversedParts] = modulePath.split('/').reverse();
   let currentDir = reversedParts.reverse().join('/');
 
-  console.log({ glob, currentDir, modulePath });
   assert(
     `not a valid path. Received: '${currentDir}' from '${modulePath}'`,
     currentDir.length > 0,
@@ -67,6 +66,13 @@ export function importMetaGlob(glob, options, modulePath) {
 
   // TODO: drop the extensions, since at runtime, we don't have them.
   let globsArray = Array.isArray(glob) ? glob : [glob];
+
+  [...globsArray].forEach((g) => {
+    let extensionless = g.replace(/\.\w{2,3}$/, '');
+
+    globsArray.push(extensionless);
+  });
+
   let fullGlobs = globsArray.map((g) => {
     return `${currentDir}/${g.replace(/^.\//, '')}`;
   });

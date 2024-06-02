@@ -4,6 +4,8 @@ import { globs as appTreeGlob } from 'test-app/glob-imports';
 
 const testTreeGlob = import.meta.glob('./from-tests/**', { eager: true });
 
+const HERE = 'test-app/tests/glob-test/the-test';
+
 module('Glob tests', function () {
   test('works from app', function (assert) {
     let keys = Object.keys(appTreeGlob);
@@ -49,22 +51,21 @@ module('Glob tests', function () {
 
   module('underlying runtime', function () {
     test('extensions are stripped and the same as without using extensions', (assert) => {
-      let a = importMetaGlob('./from-tests/**/*.js', { eager: true });
-      let b = importMetaGlob('./from-tests/**/*', { eager: true });
+      let a = importMetaGlob('./from-tests/**/*.js', { eager: true }, HERE);
+      let b = importMetaGlob('./from-tests/**/*', { eager: true }, HERE);
 
-      assert.deepEqual(a, b);
+      assert.deepEqual(Object.keys(a), Object.keys(b));
+      assert.deepEqual(Object.values(a)[0].a, Object.values(b)[0].a);
+      assert.deepEqual(Object.values(a)[1].b, Object.values(b)[1].b);
+      assert.deepEqual(Object.values(a)[2].c, Object.values(b)[2].c);
     });
 
     module('errors', function () {
       module('glob', function () {
         test('errors when trying to escape the app', function (assert) {
           assert.throws(() => {
-            importMetaGlob(
-              '../../../something',
-              { eager: true },
-              'test-app/tests/glob-test/the-test',
-            );
-          }, /not a valid path/);
+            importMetaGlob('../../../something', { eager: true }, HERE);
+          }, /Cannot have a path that escapes the app/);
         });
 
         test('errors when a sibling path tries to escape the app', function (assert) {
@@ -72,14 +73,14 @@ module('Glob tests', function () {
             importMetaGlob(
               './from-tests/../../../../something',
               { eager: true },
-              'test-app/tests/glob-test/the-test',
+              HERE,
             );
           }, /Cannot have a path that escapes the app/);
         });
 
         test('invalid glob', function (assert) {
           assert.throws(() => {
-            importMetaGlob('**/*');
+            importMetaGlob('**/*', HERE);
           }, /The glob pattern must be a relative path starting with either/);
         });
       });
@@ -87,19 +88,19 @@ module('Glob tests', function () {
       module('options', function () {
         test('errors with incorrect options', function (assert) {
           assert.throws(() => {
-            importMetaGlob('./**/*', true);
+            importMetaGlob('./**/*', true, HERE);
           }, /the second argument to import.meta.glob must be an object/);
         });
 
         test('when passing options, cannot be empty', function (assert) {
           assert.throws(() => {
-            importMetaGlob('./**/*', {});
+            importMetaGlob('./**/*', {}, HERE);
           }, /the only supported option is 'eager'/);
         });
 
         test('when passing options, only eager is allowed', function (assert) {
           assert.throws(() => {
-            importMetaGlob('./**/*', { boop: 1 });
+            importMetaGlob('./**/*', { boop: 1 }, HERE);
           }, /the only supported option is 'eager'/);
         });
       });
@@ -109,6 +110,12 @@ module('Glob tests', function () {
           assert.throws(() => {
             importMetaGlob('./**/*', { eager: true });
           }, /the third argument to import.meta.glob must be passed and be the module path/);
+        });
+
+        test(`errors with wrong path (can't be the entrypoint)`, function (assert) {
+          assert.throws(() => {
+            importMetaGlob('../../../something', { eager: true }, 'test-app');
+          }, /not a valid path/);
         });
       });
     });
