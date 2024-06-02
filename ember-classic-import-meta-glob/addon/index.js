@@ -13,6 +13,14 @@ import pico from 'picomatch';
  */
 export function importMetaGlob(glob, options, modulePath) {
   assert(
+    `The first argument to import.meta.glob must be a string`,
+    typeof glob === 'string',
+  );
+  assert(
+    `The glob pattern must be a relative path starting with either ./ or ../. Received: ${glob}`,
+    glob.startsWith('./') || glob.startsWith('../'),
+  );
+  assert(
     `the second argument to import.meta.glob must be passed and set to { eager: true }`,
     options && options.eager === true,
   );
@@ -36,11 +44,15 @@ export function importMetaGlob(glob, options, modulePath) {
   let [, ...reversedParts] = modulePath.split('/').reverse();
   let currentDir = reversedParts.reverse().join('/');
 
+  // TODO: drop the extensions, since at runtime, we don't have them.
   let fullGlobs = Array.isArray(glob)
     ? glob.map((g) => `${currentDir}${g}`)
     : [`${modulePath}${glob}`];
   let isMatch = pico(fullGlobs);
   let matches = allModules.filter(isMatch);
+
+  // TODO: assert: cannot escape the app.
+  //       (too many ../../../../)
 
   let result = {};
 
