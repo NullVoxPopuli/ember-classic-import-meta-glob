@@ -12,6 +12,7 @@ module('Glob tests', function () {
     assert.strictEqual(appTreeGlob['./from-app/b'].b, 'b1');
     assert.strictEqual(appTreeGlob['./from-app/c'].c, 'c1');
   });
+
   test('works from tests', function (assert) {
     let keys = Object.keys(testTreeGlob);
     assert.deepEqual(keys, [
@@ -25,15 +26,25 @@ module('Glob tests', function () {
   });
 
   test('with no matches', function (assert) {
-    let result = import.meta.glob('/does/not/exist', { eager: true });
+    let result = import.meta.glob('./does/not/exist', { eager: true });
 
-    assert.deepEqual(result, { _: 1 });
+    assert.strictEqual(Object.keys(result).length, 0);
+    assert.deepEqual(result, {});
   });
 
   test('default (async)', async (assert) => {
     let result = import.meta.glob('./from-tests/*');
 
-    assert.deepEqual(result, { './from-tests/a': './' });
+    let keys = Object.keys(result);
+    assert.deepEqual(keys, [
+      './from-tests/a',
+      './from-tests/b',
+      './from-tests/c',
+    ]);
+
+    assert.strictEqual((await result['./from-tests/a']()).a, 'a1');
+    assert.strictEqual((await result['./from-tests/b']()).b, 'b1');
+    assert.strictEqual((await result['./from-tests/c']()).c, 'c1');
   });
 
   module('underlying runtime', function () {
@@ -48,8 +59,22 @@ module('Glob tests', function () {
       module('glob', function () {
         test('errors when trying to escape the app', function (assert) {
           assert.throws(() => {
-            importMetaGlob('../../../something', { eager: true }, 'test-app');
-          }, /123 boop/);
+            importMetaGlob(
+              '../../../something',
+              { eager: true },
+              'test-app/tests/glob-test/the-test',
+            );
+          }, /not a valid path/);
+        });
+
+        test('errors when a sibling path tries to escape the app', function (assert) {
+          assert.throws(() => {
+            importMetaGlob(
+              './from-tests/../../../../something',
+              { eager: true },
+              'test-app/tests/glob-test/the-test',
+            );
+          }, /Cannot have a path that escapes the app/);
         });
 
         test('invalid glob', function (assert) {
