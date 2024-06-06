@@ -4,6 +4,8 @@ Implements [RFC#939: import.meta.glob](https://github.com/emberjs/rfcs/pull/939)
 
 ## Compatibility
 
+See working demos here: https://github.com/NullVoxPopuli/ember-import-meta-glob-demos
+
 - Apps using ember-source v3.28
 - ember-auto-import v2
   - unless the paths being imported are under the [`allowAppImports` config](https://github.com/embroider-build/ember-auto-import?tab=readme-ov-file#app-imports)
