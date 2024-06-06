@@ -1,5 +1,10 @@
 # Changelog
 
+
+
+
+
+
 ## Release (2024-06-02)
 
 ember-classic-import-meta-glob 0.1.0 (minor)
