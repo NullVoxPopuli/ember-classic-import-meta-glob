@@ -57,6 +57,17 @@ module('from this file', function () {
     assert.deepEqual(result, {});
   });
 
+  test('with ../', function (assert) {
+    let result = import.meta.glob('../../from-app/**');
+
+    assert.strictEqual(Object.keys(result).length, 3);
+    assert.deepEqual(Object.keys(result), [
+      'test-app/from-app/a',
+      'test-app/from-app/b',
+      'test-app/from-app/c',
+    ]);
+  });
+
   test('default (async)', async (assert) => {
     let result = import.meta.glob('./from-tests/*');
 

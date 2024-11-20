@@ -57,6 +57,7 @@
     "ember-auto-import": "^2.7.2",
     "ember-cli-babel": "^8.2.0",
     "ember-cli-babel-plugin-helpers": "^1.1.1",
+    "path-normalize": "^6.0.13",
     "picomatch": "^4.0.2"
   }
 }

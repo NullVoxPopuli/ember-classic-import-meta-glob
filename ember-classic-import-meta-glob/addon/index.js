@@ -1,7 +1,8 @@
 /* globals requirejs */
 import { assert } from '@ember/debug';
 
-import pico from 'picomatch';
+import normalizePath from 'path-normalize';
+import pico from 'picomatch/posix';
 
 /**
  * Only supported usage:
@@ -68,13 +69,14 @@ export function importMetaGlob(glob, options, modulePath) {
   let globsArray = Array.isArray(glob) ? glob : [glob];
 
   [...globsArray].forEach((g) => {
-    let extensionless = g.replace(/\.\w{2,3}$/, '');
+    let extensionless = g.replace(/\.\{?\w{2,}\}?$/, '');
 
     globsArray.push(extensionless);
   });
 
   let fullGlobs = globsArray.map((g) => {
-    return `${currentDir}/${g.replace(/^.\//, '')}`;
+    // Collapses ./ and ../
+    return normalizePath(`${currentDir}/${g}`, /* allowAboveRoot */ false);
   });
   let isMatch = pico(fullGlobs);
   let matches = allModules.filter(isMatch);
@@ -111,6 +113,13 @@ function isEscapingApp(path) {
 
   let preUpCount = 0;
   let upCount = 0;
+
+  // normalizePath will return the right-most path segment if you ../
+  // too many times. This is wrong for us.
+  // a plain 'module-name' (no slashes) is not importable in ember.
+  if (parts.length === 1) {
+    return true;
+  }
 
   for (let part of parts) {
     if (part === '..') {
