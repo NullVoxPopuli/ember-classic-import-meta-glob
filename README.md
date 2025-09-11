@@ -1,6 +1,9 @@
 # ember-classic-import-meta-glob
 
-Implements [RFC#939: import.meta.glob](https://github.com/emberjs/rfcs/pull/939) for ember-classic (pre-embroider).
+Implements [RFC#939: import.meta.glob](https://github.com/emberjs/rfcs/pull/939) for ember-classic (pre-embroider) via runtime hacks.
+
+> [!NOTE]
+> There is a build-time implementation planned, but is not released yet. If you don't yet need `import.meta.glob`, you _may_ want to hold off until that build-time implementation built (provided it solves all the uses cases `import.meta.glob` needs to cover) -- for context on the current state of `import.meta.glob` support in ember-cli, see [this summary](https://github.com/emberjs/rfcs/pull/988#issuecomment-2489522244) comparing this runtime implementation with an initial spike of a build time implementation.
 
 ## Compatibility
 
