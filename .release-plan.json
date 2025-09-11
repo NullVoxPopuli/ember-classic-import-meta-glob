@@ -1,17 +1,8 @@
 {
   "solution": {
     "ember-classic-import-meta-glob": {
-      "impact": "patch",
-      "oldVersion": "0.1.0",
-      "newVersion": "0.1.1",
-      "constraints": [
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        }
-      ],
-      "pkgJSONPath": "./ember-classic-import-meta-glob/package.json"
+      "oldVersion": "0.1.1"
     }
   },
-  "description": "## Release (2024-11-20)\n\nember-classic-import-meta-glob 0.1.1 (patch)\n\n#### :bug: Bug Fix\n* `ember-classic-import-meta-glob`, `test-app`\n  * [#7](https://github.com/NullVoxPopuli/ember-classic-import-meta-glob/pull/7) Fix ../ globs ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* [#8](https://github.com/NullVoxPopuli/ember-classic-import-meta-glob/pull/8) Set packageManager upgrade pnpm ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "\n\n\n\n"
 }
